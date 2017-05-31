@@ -6,3 +6,6 @@ RemoteSystemsTempFiles/
 *.zip
 *.jar
 repository/
+
+playground/
+!support/postgresql-42.1.1.jar

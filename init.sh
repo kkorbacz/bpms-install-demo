@@ -122,6 +122,14 @@ echo "  - setting up standalone.xml configuration adjustments..."
 echo
 cp $SUPPORT_DIR/standalone.xml $SERVER_CONF
 
+echo "  - copying files needed when using external database ..."
+echo 
+mkdir -p $JBOSS_HOME/modules/org/postgres/main/
+cp $SUPPORT_DIR/postgresql-42.1.1.jar $JBOSS_HOME/modules/org/postgres/main/
+cp $SUPPORT_DIR/module.xml $JBOSS_HOME/modules/org/postgres/main/
+cp $SUPPORT_DIR/persistence.xml $SERVER_DIR/business-central.war/WEB-INF/classes/META-INF/
+cp $SUPPORT_DIR/jboss-web.xml $SERVER_DIR/dashbuilder.war/WEB-INF/
+
 echo "  - setup email task notification users..."
 echo
 cp $SUPPORT_DIR/userinfo.properties $SERVER_DIR/business-central.war/WEB-INF/classes/

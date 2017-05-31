@@ -19,6 +19,8 @@ ENV EAP_VERSION_MICRO 0
 ENV EAP_INSTALLER=jboss-eap-$EAP_VERSION_MAJOR.$EAP_VERSION_MINOR.$EAP_VERSION_MICRO-installer.jar
 ENV BPMS_DEPLOYABLE=jboss-bpmsuite-$BPMS_VERSION_MAJOR.$BPMS_VERSION_MINOR.$BPMS_VERSION_MICRO.$BPMS_VERSION_PATCH-deployable-eap7.x.zip
 
+VOLUME /opt/jboss/.m2
+
 # ADD Installation Files
 COPY support/installation-eap support/installation-eap.variables installs/$BPMS_DEPLOYABLE installs/$EAP_INSTALLER /opt/jboss/
 
@@ -41,11 +43,18 @@ RUN $BPMS_HOME/bin/add-user.sh -a -r ApplicationRealm -u bpmsAdmin -p bpmsuite1!
 COPY support/standalone.xml $BPMS_HOME/standalone/configuration/
 COPY support/userinfo.properties $BPMS_HOME/standalone/deployments/business-central.war/WEB-INF/classes/
 
+# Configuring external persistence for Business Central and Dashbuilder
+COPY support/postgresql-42.1.1.jar $BPMS_HOME/modules/org/postgres/main/
+COPY support/module.xml $BPMS_HOME/modules/org/postgres/main/
+COPY support/persistence.xml $BPMS_HOME/standalone/deployments/business-central.war/WEB-INF/classes/META-INF/
+COPY support/jboss-web.xml $BPMS_HOME/standalone/deployments/dashbuilder.war/WEB-INF/
+
 # Swtich back to root user to perform cleanup
 USER root
 
+# TODO [kkorbacz] verify if permissions on postgresql-42.1.1.jar, module.xml, persistence.xml, jboss-web.xml need to be changed (changing them just in case)
 # Fix permissions on support files
-RUN chown -R 1000:1000 $BPMS_HOME/standalone/configuration/standalone.xml $BPMS_HOME/standalone/deployments/business-central.war/WEB-INF/classes/userinfo.properties
+RUN chown -R 1000:1000 $BPMS_HOME/standalone/configuration/standalone.xml $BPMS_HOME/standalone/deployments/business-central.war/WEB-INF/classes/userinfo.properties $BPMS_HOME/modules/org/postgres/main/postgresql-42.1.1.jar $BPMS_HOME/modules/org/postgres/main/module.xml $BPMS_HOME/standalone/deployments/business-central.war/WEB-INF/classes/META-INF/persistence.xml $BPMS_HOME/standalone/deployments/dashbuilder.war/WEB-INF/jboss-web.xml
 
 # Run as JBoss
 USER 1000
