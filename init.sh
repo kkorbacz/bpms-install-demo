@@ -122,6 +122,11 @@ echo "  - setting up standalone.xml configuration adjustments..."
 echo
 cp $SUPPORT_DIR/standalone.xml $SERVER_CONF
 
+echo "  - setting up application-users and application-roles properties (for managed Intelligent Process Server)"
+echo
+cp $SUPPORT_DIR/application-users.properties $SERVER_CONF
+cp $SUPPORT_DIR/application-roles.properties $SERVER_CONF
+
 echo "  - copying files needed when using external database ..."
 echo 
 mkdir -p $JBOSS_HOME/modules/org/postgres/main/
